@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <omp.h>
+#include <ctime>
 #include "parallel_integral_omp.hpp"
 
 int main()

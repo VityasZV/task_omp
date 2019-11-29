@@ -16,10 +16,11 @@ namespace parallel_integral {
 		}
 
 		struct AccuracyParameters {
-			int parts = 2;
+			int parts;
 			double step;
 			const Limits limits;
 			AccuracyParameters(std::ifstream& input_file): limits(input_file){
+				parts = 2;
 				step = (limits.right - limits.left) / parts;
 			}
 			void Increment() {
@@ -53,12 +54,12 @@ namespace parallel_integral {
 			{
 				#pragma omp for
 				for (i = 0; i < accuracy_parameters.parts; ++i) {
-					auto x = accuracy_parameters.limits.left + i * accuracy_parameters.step;
+					double x = accuracy_parameters.limits.left + i * accuracy_parameters.step;
 					result += accuracy_parameters.step * Function(x + accuracy_parameters.step / 2);
 				}
 			}
 
-		} while (abs(result - previous_result) >= kAccuracy);
+		} while (fabs(result - previous_result) >= kAccuracy);
 		return result;
 	}
 

@@ -7,6 +7,7 @@
 namespace parallel_integral {
 
 	namespace {
+        extern "C" double omp_get_wtime(void);
 
 		static const double kAccuracy = 0.00001;
 
@@ -61,7 +62,7 @@ namespace parallel_integral {
 			}
 
 		} while (fabs(result - previous_result) >= kAccuracy);
-        time = omp_get_wtime() - time
+        time = omp_get_wtime() - time;
         return ResultAndTime(result, time);
 	}
 

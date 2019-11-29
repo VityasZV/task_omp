@@ -40,11 +40,12 @@ namespace parallel_integral {
 		input_file.close();
 	}
 
-	double ComputeIntegral() {
+	ResultAndTime ComputeIntegral() {
 		std::ifstream input_file;
 		AccuracyParameters accuracy_parameters(input_file);
 		double previous_result = 0, result = 0;
 		int i = 0;
+        double time = omp_get_wtime();
 		do {
 			
 			previous_result = result;
@@ -60,7 +61,8 @@ namespace parallel_integral {
 			}
 
 		} while (fabs(result - previous_result) >= kAccuracy);
-		return result;
+        time = omp_get_wtime() - time
+        return ResultAndTime(result, time);
 	}
 
 }

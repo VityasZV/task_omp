@@ -8,8 +8,12 @@ namespace parallel_integral {
 		double right;
 		Limits(std::ifstream& input_file);
 	};
-
+    struct ResultAndTime {
+        double result;
+        double time;
+        ResultAndTime(const double &result,const double &time): result(result), time(time){}
+    };
 	// Parallel computing of integral
-	double ComputeIntegral();
+	ResultAndTime ComputeIntegral();
 
 }// parallel_integral

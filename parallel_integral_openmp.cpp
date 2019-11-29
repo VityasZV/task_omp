@@ -7,5 +7,7 @@
 
 int main()
 {
-	std::cout << parallel_integral::ComputeIntegral();
+    result_and_time = parallel_integral::ComputeIntegral();
+    std::cout << "result = " << result_and_time.result;
+    std::cout << "time = " << result_and_time.time;
 }

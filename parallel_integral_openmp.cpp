@@ -10,5 +10,5 @@ int main()
 {
     parallel_integral::ResultAndTime result_and_time = parallel_integral::ComputeIntegral();
     std::cout << "result = " << result_and_time.result;
-    std::cout << "\ntime = " << result_and_time.time;
+    std::cout << "\ntime = " << result_and_time.time << std::endl;
 }

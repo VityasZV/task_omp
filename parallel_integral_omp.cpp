@@ -7,17 +7,17 @@
 namespace parallel_integral {
 
 	namespace {
-        extern "C" double omp_get_wtime(void);
+        	extern "C" double omp_get_wtime(void);
 
-		static const double kAccuracy = 0.00001;
+		static const double kAccuracy = 0.0001;
 
 
 		double Function(const double& arg) {
-			return 3 * std::pow(arg, 2) + 2 * arg;
+			return 3*std::pow(arg, -1) + 2;
 		}
 
 		struct AccuracyParameters {
-			int parts;
+			unsigned long parts;
 			double step;
 			const Limits limits;
 			AccuracyParameters(std::ifstream& input_file): limits(input_file){
@@ -45,8 +45,8 @@ namespace parallel_integral {
 		std::ifstream input_file;
 		AccuracyParameters accuracy_parameters(input_file);
 		double previous_result = 0, result = 0;
-		int i = 0;
-        double time = omp_get_wtime();
+		unsigned long i = 0;
+        	double time = omp_get_wtime();
 		do {
 			
 			previous_result = result;

@@ -9,4 +9,3 @@ OMP_NUM_THREADS=8 ./a.out
 OMP_NUM_THREADS=16 ./a.out
 OMP_NUM_THREADS=32 ./a.out
 OMP_NUM_THREADS=64 ./a.out
-

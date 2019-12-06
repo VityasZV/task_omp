@@ -15,7 +15,7 @@ namespace parallel_integral {
 
 
 		double Function(const double& arg) {
-			return 3*std::pow(arg, -1) + 2;
+			return 1;
 		}
 
 		struct AccuracyParameters {
@@ -61,9 +61,12 @@ namespace parallel_integral {
         //  Get the individual process ID.
         //
         mpi_statistics.ierr = MPI_Comm_rank(MPI_COMM_WORLD, &mpi_statistics.process_id);
-        //
-        //  Process 0 prints an introductory message.
-        //
+		if (mpi_statistics.process_id == 0){
+			std::cout << "Here is master - " << std::endl;
+		}
+		else {
+			std::cout << "Not master" << std::endl;
+		}
 		do {
 			previous_result = result;
 			result = 0;

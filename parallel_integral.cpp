@@ -50,15 +50,17 @@ namespace parallel_integral {
 		unsigned long i = 0;
         double time = omp_get_wtime(); //needs change to MPI
 		mpi_info::MPI mpi_statistics(argc_ptr, argv_ptr);
-		int ierr;
+		if (mpi_info.ierr != 0) {
+			return ResultAndTime(-1, -1); //костыли потому что не получилось указать компилятору использование std::exception
+		}
 		//
         //  Get the number of processes.
         //
-        ierr = MPI_Comm_size(MPI_COMM_WORLD, &mpi_statistics.amount_of_processes);
+        mpi_statistics.ierr = MPI_Comm_size(MPI_COMM_WORLD, &mpi_statistics.amount_of_processes);
         //
         //  Get the individual process ID.
         //
-        ierr = MPI_Comm_rank(MPI_COMM_WORLD, &mpi_statistics.process_id);
+        mpi_statistics.ierr = MPI_Comm_rank(MPI_COMM_WORLD, &mpi_statistics.process_id);
         //
         //  Process 0 prints an introductory message.
         //

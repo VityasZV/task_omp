@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include "parallel_integral.hpp"
+#include <exception>
 
 int main(int argc, char **argv)
 {

@@ -1,2 +1,2 @@
 #!/bin/bash -x
-mpixlc_r -qsmp=omp parallel_integral_openmp.cpp -o parrallel_integral
+mpixlC -qsmp=omp parallel_integral_mpi.cpp parallel_integral.cpp mpi_info.cpp -o par

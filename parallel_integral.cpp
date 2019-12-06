@@ -50,7 +50,7 @@ namespace parallel_integral {
 		unsigned long i = 0;
         double time = omp_get_wtime(); //needs change to MPI
 		mpi_info::MPI mpi_statistics(argc_ptr, argv_ptr);
-		if (mpi_info.ierr != 0) {
+		if (mpi_statistics.ierr != 0) {
 			return ResultAndTime(-1, -1); //костыли потому что не получилось указать компилятору использование std::exception
 		}
 		//

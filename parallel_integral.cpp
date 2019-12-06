@@ -1,6 +1,7 @@
 #include "parallel_integral.hpp"
 
 #include "mpi_info.hpp"
+#include <mpi.h>
 
 #include <iostream>
 #include <cmath>

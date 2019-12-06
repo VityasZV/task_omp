@@ -11,7 +11,7 @@ namespace parallel_integral {
 	namespace {
         extern "C" double omp_get_wtime(void); //possibly unneeded in MPI
 
-		static const double kAccuracy = 0.0001;
+		static const double kAccuracy = 0.000001;
 
 
 		double Function(const double& arg) {
@@ -68,7 +68,9 @@ namespace parallel_integral {
 			previous_result = result;
 			result = 0;
 			accuracy_parameters.Increment();
+#pragma omp parallel shared(accuracy_parameters) reduction(+:result)
 			{
+				#pragma omp for
 				for (i = 0; i < accuracy_parameters.parts; ++i) {
 					double x = accuracy_parameters.limits.left + i * accuracy_parameters.step;
 					result += accuracy_parameters.step * Function(x + accuracy_parameters.step / 2);

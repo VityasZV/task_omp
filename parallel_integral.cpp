@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
+#include <cstdlib>
 
 namespace parallel_integral {
 
@@ -71,9 +72,9 @@ namespace parallel_integral {
 			and then in for-cycle each process is using threads for computation of sum. 
 		*/
 		if (mpi_statistics.process_id == 0){
-			requests = (MPI_Request*)malloc(sizeof(MPI_Request) * mpi_statistics.amount_of_processes);
-			statuses = (MPI_Status*)malloc(sizeof(MPI_Status) * mpi_statistics.amount_of_processes);
-			collecting_result = (double*)malloc(sizeof(double) * mpi_statistics.amount_of_processes); //making an array for results coming from each process
+			requests = (MPI_Request*)std::malloc(sizeof(MPI_Request) * mpi_statistics.amount_of_processes);
+			statuses = (MPI_Status*)std::malloc(sizeof(MPI_Status) * mpi_statistics.amount_of_processes);
+			collecting_result = (double*)std::malloc(sizeof(double) * mpi_statistics.amount_of_processes); //making an array for results coming from each process
 		}
 		do {
 			if (mpi_statistics.process_id == 0){
@@ -84,7 +85,7 @@ namespace parallel_integral {
 			}
 			else {
 				double temp = 0;
-				MPI_Recv(&temp, 1, MPI_DOUBLE, MPI_ANY_TAG, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				MPI_Recv(&temp, 1, MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				//now I'm sure that every process waited for master 
 			}
 			double result_in_process = 0;
@@ -108,7 +109,7 @@ namespace parallel_integral {
 			if (mpi_statistics.process_id == 0) {
 				int count = 0;
 				while (count < mpi_statistics.amount_of_processes - 1){
-					MPI_Recv(NULL, 0, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+					MPI_Recv(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 					count+=1;
 				}
 				//MPI_Waitall(mpi_statistics.amount_of_processes - 1, &requests[1], &statuses[1]); // дождался всех 
@@ -121,6 +122,9 @@ namespace parallel_integral {
 		} while (fabs(result - previous_result) >= kAccuracy);
         time = omp_get_wtime() - time;
 		mpi_time = MPI_Wtime() - mpi_time;
+		std::free(requests);
+		std::free(statuses);
+		std::free(collecting_result);
         return ResultAndTime(result, time);
 	}
 

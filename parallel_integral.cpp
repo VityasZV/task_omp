@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <stdio.h>
 
 namespace parallel_integral {
 
@@ -49,9 +50,10 @@ namespace parallel_integral {
 		double previous_result = 0, result = 0;
 		unsigned long i = 0;
         double time = omp_get_wtime(); //needs change to MPI
-		double *collecting_result = nullptr; //buffer for master process
-		MPI_Request* requests = nullptr;
-		MPI_Status* statuses = nullptr;
+		double mpi_time = MPI_Wtime();
+		double *collecting_result = NULL; //buffer for master process
+		MPI_Request* requests = NULL;
+		MPI_Status* statuses = NULL;
 		mpi_info::MPI mpi_statistics(argc_ptr, argv_ptr);
 		if (mpi_statistics.ierr != MPI_SUCCESS) {
 			return ResultAndTime(-1, -1); //костыли потому что не получилось указать компилятору использование std::exception
@@ -91,7 +93,7 @@ namespace parallel_integral {
 #pragma omp parallel shared(accuracy_parameters) reduction(+:result_in_process)
 			{
 				unsigned long start = mpi_statistics.process_id * for_work;
-				unsigned long finish = start + for_work + mpi_statistics.process_id == 0 ? remains : 0
+				unsigned long finish = start + for_work + mpi_statistics.process_id == 0 ? remains : 0;
 				#pragma omp for
 				for (i = start; i < finish; ++i) {
 					double x = accuracy_parameters.limits.left + i * accuracy_parameters.step;
@@ -101,12 +103,12 @@ namespace parallel_integral {
 			}
 			collecting_result[mpi_statistics.process_id] = result_in_process;
 			if (mpi_statistics.process_id != 0){
-				MPI_Send(nullptr, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //sending nothing but master should wait for others
+				MPI_Send(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //sending nothing but master should wait for others
 			}
 			if (mpi_statistics.process_id == 0) {
 				int count = 0;
 				while (count < mpi_statistics.amount_of_processes - 1){
-					MPI_Recv(nullptr, 0, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+					MPI_Recv(NULL, 0, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 					count+=1;
 				}
 				//MPI_Waitall(mpi_statistics.amount_of_processes - 1, &requests[1], &statuses[1]); // дождался всех 
@@ -118,6 +120,7 @@ namespace parallel_integral {
 
 		} while (fabs(result - previous_result) >= kAccuracy);
         time = omp_get_wtime() - time;
+		mpi_time = MPI_Wtime() - mpi_time;
         return ResultAndTime(result, time);
 	}
 

@@ -112,11 +112,11 @@ namespace parallel_integral {
 			}
 			if (mpi_statistics.process_id == 0) {
 				int count = 0;
-				std::cout << "PROCESS: "<<mpi_statistics.process_id << "is waiting for others finally" << std::endl;
-				while (count < mpi_statistics.amount_of_processes - 1){
-					MPI_Recv(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-					count+=1;
-				}
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "is waiting for others finally" << std::endl; //here was infinite loop last time
+
+				MPI_Recv(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				count+=1;
+				
 				std::cout << "PROCESS: "<<mpi_statistics.process_id << "waited for count=" << count << std::endl;
 				//MPI_Waitall(mpi_statistics.amount_of_processes - 1, &requests[1], &statuses[1]); // дождался всех 
 				std::cout << "DEBUG: Master waited for all " << mpi_statistics.amount_of_processes - 1 << std::endl;

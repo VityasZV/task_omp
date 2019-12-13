@@ -85,7 +85,7 @@ namespace parallel_integral {
 				accuracy_parameters.Increment();
 				double temp = 0;
 				//cycle that is instead of broadcast
-				for (int k = 1; k < mpi_statistics.amount_of_processes){
+				for (int k = 1; k < mpi_statistics.amount_of_processes; ++k){
 					MPI_Send(&temp, 1, MPI_DOUBLE, k, 0, MPI_COMM_WORLD);
 				}
 				//commented next line bacause it is possibly wrong

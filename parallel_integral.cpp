@@ -83,7 +83,13 @@ namespace parallel_integral {
 				previous_result = result;
 				result = 0;
 				accuracy_parameters.Increment();
-				MPI_Bcast(&result, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD); // sending message for the rest processes, all must wait
+				double temp = 0
+				//cycle that is instead of broadcast
+				for (int k = 1; k < mpi_statistics.amount_of_processes){
+					MPI_Send(&temp, 1, MPI_DOUBLE, k, 0, MPI_COMM_WORLD);
+				}
+				//commented next line bacause it is possibly wrong
+				//MPI_Bcast(&result, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD); // sending message for the rest processes, all must wait
 			}
 			else {
 				double temp = 0;
@@ -116,7 +122,7 @@ namespace parallel_integral {
 
 				MPI_Recv(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 				count+=1;
-				
+
 				std::cout << "PROCESS: "<<mpi_statistics.process_id << "waited for count=" << count << std::endl;
 				//MPI_Waitall(mpi_statistics.amount_of_processes - 1, &requests[1], &statuses[1]); // дождался всех 
 				std::cout << "DEBUG: Master waited for all " << mpi_statistics.amount_of_processes - 1 << std::endl;

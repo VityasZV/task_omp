@@ -72,12 +72,14 @@ namespace parallel_integral {
 			and then in for-cycle each process is using threads for computation of sum. 
 		*/
 		if (mpi_statistics.process_id == 0){
+			std::cout << "PROCESS: "<<mpi_statistics.process_id <<" - allocates memory for arrays" << std::endl;
 			requests = (MPI_Request*)std::malloc(sizeof(MPI_Request) * mpi_statistics.amount_of_processes);
 			statuses = (MPI_Status*)std::malloc(sizeof(MPI_Status) * mpi_statistics.amount_of_processes);
 			collecting_result = (double*)std::malloc(sizeof(double) * mpi_statistics.amount_of_processes); //making an array for results coming from each process
 		}
 		do {
 			if (mpi_statistics.process_id == 0){
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "changes params and broadcast" << std::endl;
 				previous_result = result;
 				result = 0;
 				accuracy_parameters.Increment();
@@ -86,6 +88,7 @@ namespace parallel_integral {
 			else {
 				double temp = 0;
 				MPI_Recv(&temp, 1, MPI_DOUBLE, 0, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "received broadcast";
 				//now I'm sure that every process waited for master 
 			}
 			double result_in_process = 0;
@@ -104,14 +107,17 @@ namespace parallel_integral {
 			}
 			collecting_result[mpi_statistics.process_id] = result_in_process;
 			if (mpi_statistics.process_id != 0){
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "sending nothing to master" << std::endl;
 				MPI_Send(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //sending nothing but master should wait for others
 			}
 			if (mpi_statistics.process_id == 0) {
 				int count = 0;
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "is waiting for others finally" << std::endl;
 				while (count < mpi_statistics.amount_of_processes - 1){
 					MPI_Recv(NULL, 0, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 					count+=1;
 				}
+				std::cout << "PROCESS: "<<mpi_statistics.process_id << "waited for count=" << count << std::endl;
 				//MPI_Waitall(mpi_statistics.amount_of_processes - 1, &requests[1], &statuses[1]); // дождался всех 
 				std::cout << "DEBUG: Master waited for all " << mpi_statistics.amount_of_processes - 1 << std::endl;
 				for (int j = 0; j < mpi_statistics.amount_of_processes; ++j){

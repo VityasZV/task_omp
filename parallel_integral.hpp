@@ -14,6 +14,6 @@ namespace parallel_integral {
         ResultAndTime(const double &result,const double &time): result(result), time(time){}
     };
 	// Parallel computing of integral
-	ResultAndTime ComputeIntegral();
+	ResultAndTime ComputeIntegral(int *argc_ptr, char ***argv_ptr);
 
 }// parallel_integral

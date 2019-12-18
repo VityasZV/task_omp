@@ -2,6 +2,7 @@
 
 #include "mpi_info.hpp"
 #include <mpi.h>
+#include <omp.h>
 
 #include <iostream>
 #include <cmath>
@@ -85,15 +86,16 @@ namespace parallel_integral {
 			double result_in_process = 0;
 			unsigned long for_work = accuracy_parameters.parts / mpi_statistics.amount_of_processes;
 			unsigned long remains = accuracy_parameters.parts % mpi_statistics.amount_of_processes;
+			unsigned long start = mpi_statistics.process_id * for_work;
+			unsigned long finish = start + for_work;// + mpi_statistics.process_id == 0 ? remains : 0;
+			//std::cout << "ID:" << mpi_statistics.process_id <<" start:" << start << " finish:" << finish << std::endl;
+			#pragma omp parallel shared(accuracy_parameters) reduction(+:result)
 			{
-				unsigned long start = mpi_statistics.process_id * for_work;
-				unsigned long finish = start + for_work;// + mpi_statistics.process_id == 0 ? remains : 0;
-				//std::cout << "ID:" << mpi_statistics.process_id <<" start:" << start << " finish:" << finish << std::endl;
+				#pragma omp for
 				for (i = start; i < finish; ++i) {
 					double x = accuracy_parameters.limits.left + i * accuracy_parameters.step;
 					result_in_process += accuracy_parameters.step * Function(x + accuracy_parameters.step / 2);
 				}
-
 			}
 			if (mpi_statistics.process_id != 0){
 				//std::cout << "PROCESS: "<<mpi_statistics.process_id << "sending result: " <<result_in_process<< " to master" << std::endl;

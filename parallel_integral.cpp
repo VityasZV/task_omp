@@ -89,7 +89,7 @@ namespace parallel_integral {
 			unsigned long start = mpi_statistics.process_id * for_work;
 			unsigned long finish = start + for_work;// + mpi_statistics.process_id == 0 ? remains : 0;
 			//std::cout << "ID:" << mpi_statistics.process_id <<" start:" << start << " finish:" << finish << std::endl;
-			#pragma omp parallel shared(accuracy_parameters) reduction(+:result)
+			#pragma omp parallel shared(accuracy_parameters) reduction(+:result_in_process)
 			{
 				#pragma omp for
 				for (i = start; i < finish; ++i) {

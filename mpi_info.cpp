@@ -8,7 +8,7 @@ namespace mpi_info {
         //  Initialize MPI.
     }
     MPI::~MPI(){
-        MPI_Finalize();
+        //nothing
     }
 }// mpi_info
 
